@@ -136,7 +136,7 @@ socket.on("voteUpdate", (poll) => {
     setCurrentPoll(null);
     setParticipants([]);
     setChatMessages([]);
-
+    localStorage.clear()
     // Optionally, emit a socket event to notify clients
     socketRef.current?.emit("allCleared");
   } catch (error) {

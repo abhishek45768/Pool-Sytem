@@ -1,35 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { usePolling } from "../PollingContext";
-import { useLocation } from "react-router-dom";  // <-- import useLocation
+import { useLocation } from "react-router-dom";
 
 const FloatingChat = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
-  const location = useLocation();  // <-- get current location
+  const [newMessage, setNewMessage] = useState("");
+  const location = useLocation();
 
-  const { participants, fetchParticipants, kickParticipant } = usePolling();
+  const { chatMessages, sendMessage, participants, fetchParticipants, kickParticipant } = usePolling();
 
-  // Dummy chat messages (you can replace with context later)
-  const messages = [
-    { user: "User 1", text: "Hey There, how can I help?", type: "left" },
-    { user: "User 2", text: "Nothing bro..just chill!!!", type: "right" },
-  ];
-
-  // Fetch participants when component mounts or when opened
+  // Fetch participants when switching tab
   useEffect(() => {
     if (isOpen && activeTab === "participants") {
       fetchParticipants();
     }
   }, [isOpen, activeTab]);
 
-  // Handle kicking a participant
+  const handleSend = () => {
+    if (!newMessage.trim()) return;
+    sendMessage(newMessage);
+    setNewMessage("");
+  };
+
   const handleKick = (name) => {
     if (window.confirm(`Are you sure you want to kick ${name}?`)) {
       kickParticipant(name);
     }
   };
 
-  // Check if route includes "teacher"
   const isTeacherRoute = location.pathname.includes("teacher");
 
   return (
@@ -37,6 +36,7 @@ const FloatingChat = () => {
       <div className="chat-inner">
         {isOpen && (
           <div className="chat-box">
+            {/* Tabs */}
             <div className="chat-tabs">
               <span
                 className={`tab ${activeTab === "chat" ? "active" : ""}`}
@@ -52,20 +52,82 @@ const FloatingChat = () => {
               </span>
             </div>
 
+            {/* Content */}
             <div className="chat-content">
               {activeTab === "chat" ? (
-                <div className="messages">
-                  {messages.map((msg, idx) => (
-                    <div
-                      key={idx}
-                      className={`message ${msg.type === "left" ? "left" : "right"}`}
-                    >
-                      <div className="username">{msg.user}</div>
-                      <div className="bubble">{msg.text}</div>
-                    </div>
-                  ))}
-                </div>
+                <>
+                  {/* Messages */}
+                  <div className="messages">
+                    {chatMessages.length === 0 && (
+                      <p style={{ textAlign: "center", color: "#777" }}>
+                        No messages yet...
+                      </p>
+                    )}
+                    {chatMessages.map((msg, idx) => (
+                      <div
+                        key={idx}
+                        className={`message ${
+                          msg.userType === "teacher" ? "left" : "right"
+                        }`}
+                      >
+                        <div className="username">{msg.user}</div>
+                        <div className="bubble">{msg.message}</div>
+                        <div className="timestamp">{msg.timestamp}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Input Box */}
+                  {/* Input Box */}
+<div
+  className="chat-input"
+  style={{
+    display: "flex",
+    alignItems: "center",
+    padding: "8px",
+    borderTop: "1px solid #ddd",
+    background: "#f9fafb",
+  }}
+>
+  <input
+    type="text"
+    value={newMessage}
+    onChange={(e) => setNewMessage(e.target.value)}
+    placeholder="Type a message..."
+    onKeyDown={(e) => e.key === "Enter" && handleSend()}
+    style={{
+      flex: 1,
+      padding: "10px 14px",
+      borderRadius: "20px",
+      border: "1px solid #ccc",
+      outline: "none",
+      fontSize: "14px",
+      marginRight: "8px",
+    }}
+  />
+  <button
+    onClick={handleSend}
+    style={{
+      backgroundColor: "#6C63FF",
+      color: "white",
+      border: "none",
+      padding: "10px 18px",
+      borderRadius: "20px",
+      cursor: "pointer",
+      fontSize: "14px",
+      fontWeight: "500",
+      transition: "background 0.2s",
+    }}
+    onMouseOver={(e) => (e.target.style.backgroundColor = "#5750d6")}
+    onMouseOut={(e) => (e.target.style.backgroundColor = "#6C63FF")}
+  >
+    Send
+  </button>
+</div>
+
+                </>
               ) : (
+                // Participants Tab
                 <div className="participants">
                   <h4>Participants</h4>
                   {participants.length === 0 && <p>No participants found.</p>}
@@ -81,12 +143,13 @@ const FloatingChat = () => {
                       }}
                     >
                       <span
-                        className={`participant-name ${!isOnline ? "offline" : ""}`}
+                        className={`participant-name ${
+                          !isOnline ? "offline" : ""
+                        }`}
                         style={{ opacity: isOnline ? 1 : 0.5 }}
                       >
                         {name} {isOnline ? "" : "(Offline)"}
                       </span>
-                      {/* Only show Kick button if isTeacherRoute and participant is online */}
                       {isTeacherRoute && isOnline && (
                         <button
                           onClick={() => handleKick(name)}
@@ -112,6 +175,7 @@ const FloatingChat = () => {
           </div>
         )}
 
+        {/* Floating Button */}
         <button className="chat-toggle-btn" onClick={() => setIsOpen(!isOpen)}>
           💬
         </button>

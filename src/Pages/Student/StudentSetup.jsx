@@ -25,7 +25,7 @@ export default function StudentSetup() {
 
         // Store student in localStorage
         localStorage.setItem("studentName", res.name || values.name);
-
+        localStorage.setItem("Std_id",res._id)
         // Redirect to student pool
         window.location.href = "/student-pool";
       } catch (err) {

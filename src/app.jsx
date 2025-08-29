@@ -8,7 +8,7 @@ import StudentPoll from "./Pages/Student/StudentPool";
 import { PollingProvider } from "./PollingContext";
 import PollHistory from "./Pages/Teacher/History";
 import CompletePollHistoryPage from "./Pages/Teacher/CompletePoolHistory";
-
+import KickedOut from "./Pages/Teacher/KickOut";
 function App() {
   return (
     <PollingProvider>
@@ -20,6 +20,7 @@ function App() {
           <Route path="/student-pool" element={<StudentPoll />} />
           <Route path="/teacher-history" element={<PollHistory />} />
           <Route path="/complete-history" element={<CompletePollHistoryPage />} />
+          <Route path="/kick-out" element={< KickedOut/>} />
           
         </Routes>
       </Router>

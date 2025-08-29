@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://host:5000/api/", 
+  baseURL: "https://pool-sytem-backend.onrender.com/api/", 
   headers: {
     "Content-Type": "application/json",
   },

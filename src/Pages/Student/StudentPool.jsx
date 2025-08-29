@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { usePolling } from "../../PollingContext";
 import FloatingChat from "../FloatingChat";
 import logo from '../../assets/image.png'; 
+import { apiRequest } from "../../utils/httpsMethod";
+import { useNavigate } from "react-router-dom";
 
 export default function StudentPoll() {
   const { currentPoll, chatMessages, participants, submitVote, sendMessage, setUserRole } = usePolling();
@@ -9,7 +11,7 @@ export default function StudentPoll() {
   const [selectedOption, setSelectedOption] = useState(null);
   const [hasVoted, setHasVoted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
-
+const navigate=useNavigate()
 useEffect(() => {
   const name = localStorage.getItem("studentName") || "Student";
   setUserRole("student", name);
@@ -79,7 +81,33 @@ useEffect(() => {
     const total = getTotalVotes();
     return total > 0 ? Math.round((votes / total) * 100) : 0;
   };
+const studId=localStorage.getItem("Std_id")
+const getStudentPool=async()=>{
+  try {
+    const response= await await apiRequest("GET", `participants/${studId}`, {
+        });
+        if(response.kick_out){
+          navigate('/kick-out')
+        }
+  } catch (error) {
+    console.log('error', error)
+  }
+}
+useEffect(() => {
+  if (!studId) {
+    navigate("/");
+    return;
+  }
 
+  getStudentPool();
+
+
+  const interval = setInterval(() => {
+    getStudentPool();
+  }, 3000);
+
+  return () => clearInterval(interval);
+}, [studId, navigate]);
 
   if (!currentPoll) {
     return (

@@ -1,88 +1,67 @@
-import React from "react";
-import logo from '../../assets/image.png'; 
+import React, { useEffect } from "react";
+import logo from "../../assets/image.png";
 
 export default function KickedOut() {
-  const handleTryAgain = () => {
+  const handleRedirect = () => {
     localStorage.removeItem("isKickedOut");
     localStorage.removeItem("studentName");
     window.location.href = "/";
   };
 
+  // Auto redirect after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleRedirect();
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(to bottom right, #faf5ff, #ebf8ff)",
+        background: "#ffffff", // plain white like screenshot
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        textAlign: "center",
         padding: "16px",
       }}
     >
-      <div
-        style={{
-          textAlign: "center",
-          maxWidth: "400px",
-          background: "#fff",
-          padding: "32px",
-          borderRadius: "16px",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        }}
-      >
-        {/* Badge */}
-       <div className="flex justify-center mb-4">
-  <img
-    src={logo}
-    alt="Intervue Poll Logo"
-    className="w-36 h-auto object-contain"
-  />
-</div>
-
+      <div style={{ maxWidth: "500px" }}>
+        {/* Logo */}
+        <div style={{ marginBottom: "24px" }}>
+          <img
+            src={logo}
+            alt="Intervue Poll Logo"
+            style={{ width: "140px", margin: "0 auto" }}
+          />
+        </div>
 
         {/* Title */}
         <h1
           style={{
-            fontSize: "24px",
-            fontWeight: "bold",
+            fontSize: "28px",
+            fontWeight: "600",
             color: "#111827",
-            marginBottom: "16px",
+            marginBottom: "12px",
           }}
         >
-          You've been Kicked out!
+          You’ve been Kicked out !
         </h1>
 
         {/* Description */}
         <p
           style={{
-            color: "#4b5563",
-            marginBottom: "32px",
+            color: "#6b7280",
             fontSize: "16px",
-            lineHeight: "1.5",
+            lineHeight: "1.6",
           }}
         >
-          Looks like the teacher removed you from the poll system. Please try
-          again sometime.
+          Looks like the teacher had removed you from the poll system. <br />
+          Please try again sometime.
         </p>
-
-        {/* Button */}
-        <button
-          onClick={handleTryAgain}
-          style={{
-            backgroundColor: "#6C63FF",
-            color: "#fff",
-            padding: "12px 24px",
-            borderRadius: "8px",
-            border: "none",
-            fontSize: "16px",
-            fontWeight: "500",
-            cursor: "pointer",
-            transition: "all 0.2s ease-in-out",
-          }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#5a54d6")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#6C63FF")}
-        >
-          Try Again
-        </button>
       </div>
     </div>
   );
